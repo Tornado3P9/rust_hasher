@@ -9,6 +9,11 @@ Create a checksum for all files in the directory, including subdirectories (recu
 ```bash
 rust_hasher -r | tee checksums.txt
 rust_hasher -r > checksums.txt
+
+# If the file checksums.txt contains a line with an old checksum of itself
+grep "checksums.txt" checksums.txt
+# and it bothers you, just delete it with
+sed -i '/checksums.txt/d' checksums.txt
 ```
 
 Verify checksums list in a file and filter only for "not ok" results
