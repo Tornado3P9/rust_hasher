@@ -11,9 +11,11 @@ fn main() -> io::Result<()> {
 
     match args.len() {
         1 => Ok(println!("Usage: rust-hasher [] [-d|--directory] [-r|--recursive] [-f|--file <file_path>] [-c|--check <checksum_file>]")),
-        2 if args[1] == "-V" || args[1] == "--version" => Ok(println!("{} v0.1.1", args[0])),
-        2 if args[1] == "-d" || args[1] == "--directory" => calculate_checksums_in_current_dir(),
-        2 if args[1] == "-r" || args[1] == "--recursive" => calculate_checksums_in_current_structured_directory(),
+        2 if args[1] == "-V" || args[1] == "--version" => Ok(println!("{} v0.1.2", args[0])),
+        2 if args[1] == "-d" || args[1] == "--directory" => calculate_checksums_in_current_dir(false),
+        3 if (args[1] == "-d" || args[1] == "--directory") && args[2] == "local" => calculate_checksums_in_current_dir(true),
+        2 if args[1] == "-r" || args[1] == "--recursive" => calculate_checksums_in_current_structured_directory(false),
+        3 if (args[1] == "-r" || args[1] == "--recursive") && args[2] == "local" => calculate_checksums_in_current_structured_directory(true),
         3 if args[1] == "-f" || args[1] == "--file" => calculate_checksum_for_single_file(args[2].clone()),
         3 if args[1] == "-c" || args[1] == "--check" => verify_checksums_from_list(args[2].clone()),
         _ => {
@@ -23,7 +25,7 @@ fn main() -> io::Result<()> {
     }
 }
 
-fn calculate_checksums_in_current_dir() -> io::Result<()> {
+fn calculate_checksums_in_current_dir(local: bool) -> io::Result<()> {
     WalkDir::new(".")
         .min_depth(1)
         .max_depth(1)
@@ -33,15 +35,16 @@ fn calculate_checksums_in_current_dir() -> io::Result<()> {
         .par_bridge()
         .for_each(|entry| {
             let path = entry.path();
+            let display_path = if local { path.display().to_string() } else { path.canonicalize().unwrap().display().to_string() };
             match calculate_crc32(path) {
-                Ok(checksum) => println!("{:08x} {}", checksum, path.display()),
-                Err(e) => eprintln!("Error processing {}: {}", path.display(), e),
+                Ok(checksum) => println!("{:08x} {}", checksum, display_path),
+                Err(e) => eprintln!("Error processing {}: {}", display_path, e),
             }
         });
     Ok(())
 }
 
-fn calculate_checksums_in_current_structured_directory() -> io::Result<()> {
+fn calculate_checksums_in_current_structured_directory(local: bool) -> io::Result<()> {
     WalkDir::new(".")
         .into_iter()
         .filter_map(|e| e.ok())
@@ -49,9 +52,10 @@ fn calculate_checksums_in_current_structured_directory() -> io::Result<()> {
         .par_bridge()
         .for_each(|entry| {
             let path = entry.path();
+            let display_path = if local { path.display().to_string() } else { path.canonicalize().unwrap().display().to_string() };
             match calculate_crc32(path) {
-                Ok(checksum) => println!("{:08x} {}", checksum, path.display()),
-                Err(e) => eprintln!("Error processing {}: {}", path.display(), e),
+                Ok(checksum) => println!("{:08x} {}", checksum, display_path),
+                Err(e) => eprintln!("Error processing {}: {}", display_path, e),
             }
         });
     Ok(())

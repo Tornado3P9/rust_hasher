@@ -5,8 +5,10 @@ Syntax:
 # Print syntax when there are no additional arguments
 rust-hasher [] [-d|--directory] [-r|--recursive] [-f|--file <file_path>] [-c|--check <checksum_file>]
 
-# -d: Call the hash program on all files in current directory
-# -r: In a structured directory also include the files in subdirectories
+# -d: Call the hash program on all files in current directory (saving full file paths)
+# -d local: saving short file paths
+# -r: In a structured directory also include the files in subdirectories (saving full file paths)
+# -r local: saving short file paths
 # -f: Call the hash program on a single file
 # -c: Verify previously generated checksums.txt file
 # -V: Print version number
