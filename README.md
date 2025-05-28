@@ -1,14 +1,21 @@
-# rust_hasher
+# rust-hasher
 
 Syntax:
 ```bash
-rust_hasher [] [-d|--directory] [-r|--recursive] [-f|--file <file_path>] [-c|--check <checksum_file>]
+# Print syntax when there are no additional arguments
+rust-hasher [] [-d|--directory] [-r|--recursive] [-f|--file <file_path>] [-c|--check <checksum_file>]
+
+# -d: Call the hash program on all files in current directory
+# -r: In a structured directory also include the files in subdirectories
+# -f: Call the hash program on a single file
+# -c: Verify previously generated checksums.txt file
+# -V: Print version number
 ```
 
 Create a checksum for all files in the directory, including subdirectories (recursively):
 ```bash
-rust_hasher -r | tee checksums.txt
-rust_hasher -r > checksums.txt
+rust-hasher -r | tee checksums.txt
+rust-hasher -r > checksums.txt
 
 # If the file checksums.txt contains a line with an old checksum of itself
 grep "checksums.txt" checksums.txt
@@ -18,11 +25,11 @@ sed -i '/checksums.txt/d' checksums.txt
 
 Verify checksums list in a file and filter only for "not ok" results
 ```bash
-rust_hasher -c checksums.txt | grep -v OK
+rust-hasher -c checksums.txt | grep -v OK
 ```
 
 Append a new file to the list:
 ```bash
-rust_hasher -f ./new_file | tee -a checksums.txt
-rust_hasher -f ./new_file >> checksums.txt
+rust-hasher -f ./new_file | tee -a checksums.txt
+rust-hasher -f ./new_file >> checksums.txt
 ```

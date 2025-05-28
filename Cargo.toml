@@ -1,8 +1,9 @@
 [package]
-name = "rust_hasher"
-version = "0.1.0"
+name = "rust-hasher"
+version = "0.1.1"
 edition = "2021"
 
 [dependencies]
 crc32fast = "1.4.2"
+rayon = "1.10.0"
 walkdir = "2.5.0"
