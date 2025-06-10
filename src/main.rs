@@ -10,7 +10,7 @@ fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
     match args.len() {
-        1 => Ok(println!("Usage: rust-hasher [] [-d|--directory] [-r|--recursive] [-f|--file <file_path>] [-c|--check <checksum_file>]")),
+        1 => Ok(print_usage()),
         2 if args[1] == "-V" || args[1] == "--version" => Ok(println!("{} v0.1.2", args[0])),
         2 if args[1] == "-d" || args[1] == "--directory" => calculate_checksums_in_current_dir(false),
         3 if (args[1] == "-d" || args[1] == "--directory") && args[2] == "local" => calculate_checksums_in_current_dir(true),
@@ -19,10 +19,30 @@ fn main() -> io::Result<()> {
         3 if args[1] == "-f" || args[1] == "--file" => calculate_checksum_for_single_file(args[2].clone()),
         3 if args[1] == "-c" || args[1] == "--check" => verify_checksums_from_list(args[2].clone()),
         _ => {
-            eprintln!("Usage: rust-hasher [] [-d|--directory] [-r|--recursive] [-f|--file <file_path>] [-c|--check <checksum_file>]");
-            std::process::exit(1);
+            print_usage();
+            Ok(())
         }
     }
+}
+
+fn print_usage() {
+    println!(
+"Usage: rust-hasher [OPTIONS]
+
+Options:
+  -d, --directory          Calculate checksums in the current directory.
+  -d, --directory local    Calculate checksums in the current directory (local mode).
+  -r, --recursive          Calculate checksums recursively in the current directory.
+  -r, --recursive local    Calculate checksums recursively in the current directory (local mode).
+  -f, --file <file_path>   Calculate checksum for a single file specified by <file_path>.
+  -c, --check <checksum_file> Verify checksums from a specified <checksum_file>.
+  -V, --version            Display the version information.
+
+Examples:
+  rust-hasher -d
+  rust-hasher --file ./example.txt
+  rust-hasher -c checksums.txt
+");
 }
 
 fn calculate_checksums_in_current_dir(local: bool) -> io::Result<()> {

@@ -1,21 +1,25 @@
 # rust-hasher
 
-Syntax:
-```bash
-# Print syntax when there are no additional arguments
-rust-hasher [] [-d|--directory] [-r|--recursive] [-f|--file <file_path>] [-c|--check <checksum_file>]
+```
+Usage: rust-hasher [OPTIONS]
 
-# -d: Call the hash program on all files in current directory (saving full file paths)
-# -d local: ... (saving short file paths)
-# -r: In a structured directory also include the files in subdirectories (saving full file paths)
-# -r local: ... (saving short file paths)
-# -f: Call the hash program on a single file
-# -c: Verify previously generated checksums.txt file
-# -V: Print version number
+Options:
+  -d, --directory          Calculate checksums in the current directory.
+  -d, --directory local    Calculate checksums in the current directory (local mode).
+  -r, --recursive          Calculate checksums recursively in the current directory.
+  -r, --recursive local    Calculate checksums recursively in the current directory (local mode).
+  -f, --file <file_path>   Calculate checksum for a single file specified by <file_path>.
+  -c, --check <checksum_file> Verify checksums from a specified <checksum_file>.
+  -V, --version            Display the version information.
+
+Examples:
+  rust-hasher -d
+  rust-hasher --file ./example.txt
+  rust-hasher -c checksums.txt
 ```
 
-Create a checksum for all files in the directory, including subdirectories (recursively):
 ```bash
+# Create a checksum for all files in the directory, including subdirectories (recursively):
 rust-hasher -r | tee checksums.txt
 rust-hasher -r > checksums.txt
 
@@ -25,13 +29,13 @@ grep "checksums.txt" checksums.txt
 sed -i '/checksums.txt/d' checksums.txt
 ```
 
-Verify checksums list in a file and filter only for "not ok" results
 ```bash
+# Verify checksums list in a file and filter only for "not ok" results
 rust-hasher -c checksums.txt | grep -v OK
 ```
 
-Append a new file to the list:
 ```bash
+# Append a new file to the list:
 rust-hasher -f ./new_file | tee -a checksums.txt
 rust-hasher -f ./new_file >> checksums.txt
 ```
