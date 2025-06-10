@@ -10,7 +10,6 @@ fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
     match args.len() {
-        1 => Ok(print_usage()),
         2 if args[1] == "-V" || args[1] == "--version" => Ok(println!("{} v0.1.2", args[0])),
         2 if args[1] == "-d" || args[1] == "--directory" => calculate_checksums_in_current_dir(false),
         3 if (args[1] == "-d" || args[1] == "--directory") && args[2] == "local" => calculate_checksums_in_current_dir(true),
@@ -18,10 +17,7 @@ fn main() -> io::Result<()> {
         3 if (args[1] == "-r" || args[1] == "--recursive") && args[2] == "local" => calculate_checksums_in_current_structured_directory(true),
         3 if args[1] == "-f" || args[1] == "--file" => calculate_checksum_for_single_file(args[2].clone()),
         3 if args[1] == "-c" || args[1] == "--check" => verify_checksums_from_list(args[2].clone()),
-        _ => {
-            print_usage();
-            Ok(())
-        }
+        _ => Ok(print_usage()),
     }
 }
 
